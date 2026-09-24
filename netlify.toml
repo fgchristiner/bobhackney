@@ -1,0 +1,9 @@
+[build]
+  command = "node build/build.js"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 404
