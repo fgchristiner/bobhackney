@@ -11,6 +11,7 @@ const BASE_ID = process.env.AIRTABLE_BASE_ID;
 const TABLE = 'Pieces';
 const OUT = 'dist';
 const IMG_DIR = path.join(OUT, 'photos');
+const url = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${tableName}`;
 
 if (!TOKEN || !BASE_ID) {
   console.error('Missing AIRTABLE_TOKEN or AIRTABLE_BASE_ID env vars.');
@@ -23,6 +24,7 @@ async function fetchRecords() {
   let offset;
   do {
     const token = process.env.AIRTABLE_TOKEN;
+    
     url.searchParams.set('pageSize', '100');
     if (offset) url.searchParams.set('offset', offset);
     const res = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}` } });
