@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Public+Sans:wght@400;500;600&display=swap');
+
+:root{
+  --bg:#efeae3; --ink:#221e1a; --mut:#786c62; --card:#fbf8f4; --line:#ddd3c6;
+  --accent:#35506b; --accent-ink:#f4f1eb; --clay:#a8613c; --radius:4px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 'Public Sans',system-ui,sans-serif}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;font-weight:600;margin:0 0 .4em;line-height:1.15}
+a{color:inherit}
+img{max-width:100%;display:block}
+
+.site-head{display:flex;align-items:center;justify-content:space-between;padding:20px 28px;border-bottom:1px solid var(--line);flex-wrap:wrap;gap:12px}
+.wordmark{font-family:'Fraunces',serif;font-size:20px;text-decoration:none}
+.site-head nav{display:flex;gap:20px}
+.site-head nav a{text-decoration:none;color:var(--mut);border-bottom:2px solid transparent;padding-bottom:2px}
+.site-head nav a.is-active,.site-head nav a:hover{color:var(--ink);border-color:var(--clay)}
+
+main{max-width:1040px;margin:0 auto;padding:0 24px 80px}
+.hero{padding:56px 0 32px;max-width:560px}
+.hero h1{font-size:clamp(28px,4vw,40px)}
+.hero p{color:var(--mut);margin:0}
+.hero-narrow{max-width:480px}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:28px}
+.piece-card{position:relative}
+.piece-photo{display:block;position:relative;border-radius:var(--radius);overflow:hidden;background:var(--card);aspect-ratio:1/1}
+.piece-photo img{width:100%;height:100%;object-fit:cover}
+.piece-card h3{font-size:17px;margin-top:10px}
+.piece-card h3 a{text-decoration:none}
+.piece-meta{color:var(--mut);font-size:14px;margin:2px 0}
+.piece-price{font-weight:600;margin:2px 0 0}
+.is-sold .piece-photo img{filter:grayscale(.5);opacity:.7}
+.sold-flag{position:absolute;top:10px;left:10px;background:var(--ink);color:var(--accent-ink);font-size:12px;padding:3px 9px;border-radius:2px}
+
+.piece-detail{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;padding-top:40px}
+.piece-detail-photo{position:relative;border-radius:var(--radius);overflow:hidden;background:var(--card)}
+.piece-detail-info{max-width:420px}
+.piece-desc{color:var(--mut)}
+.piece-price-lg{font-size:24px;margin:16px 0}
+@media (max-width:720px){.piece-detail{grid-template-columns:1fr}}
+
+.btn{display:inline-block;padding:11px 20px;border-radius:var(--radius);text-decoration:none;font-weight:500;margin:6px 8px 6px 0;border:1px solid transparent}
+.btn-buy{background:var(--accent);color:var(--accent-ink)}
+.btn-buy:hover{opacity:.92}
+.btn-ghost{border-color:var(--line);color:var(--ink)}
+
+.commission-form{display:grid;gap:16px;max-width:480px;margin-top:24px}
+.commission-form label{display:grid;gap:6px;font-size:14px;color:var(--mut)}
+.commission-form input,.commission-form textarea{font:inherit;padding:10px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card);color:var(--ink)}
+.form-note{color:var(--mut);font-size:14px;min-height:1.2em}
+
+.mut{color:var(--mut)}
+.site-foot{border-top:1px solid var(--line);padding:24px 28px;color:var(--mut);font-size:14px}
