@@ -11,7 +11,7 @@ const BASE_ID = process.env.AIRTABLE_BASE_ID;
 const TABLE = 'Pieces';
 const OUT = 'dist';
 const IMG_DIR = path.join(OUT, 'photos');
-const url = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${tableName}`;
+const url = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${pieces}`;
 
 if (!TOKEN || !BASE_ID) {
   console.error('Missing AIRTABLE_TOKEN or AIRTABLE_BASE_ID env vars.');
