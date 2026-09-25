@@ -163,7 +163,7 @@ async function main() {
   await fs.rm(OUT, { recursive: true, force: true });
   await fs.mkdir(IMG_DIR, { recursive: true });
   await fs.mkdir(path.join(OUT, 'pieces'), { recursive: true });
-  await fs.cp('docs', OUT, { recursive: true });
+  await fs.cp('public', OUT, { recursive: true });
 
   const records = await fetchRecords();
   const pieces = [];
