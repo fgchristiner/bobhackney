@@ -7,7 +7,7 @@ import path from 'node:path';
 import { existsSync } from 'node:fs';
 
 const pieces = "Pieces"; 
-const url = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${pieces}
+const url = `https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${pieces}';
 
 const TOKEN = process.env.AIRTABLE_TOKEN;
 const BASE_ID = process.env.AIRTABLE_BASE_ID;
