@@ -8,7 +8,7 @@ import { existsSync } from 'node:fs';
 
 const TOKEN = process.env.AIRTABLE_TOKEN;
 const BASE_ID = process.env.AIRTABLE_BASE_ID;
-const tableName = 'pieces';
+const tableName = 'Pieces';
 const TABLE = 'Pieces';
 const OUT = 'dist';
 const IMG_DIR = path.join(OUT, 'photos');
