@@ -22,7 +22,7 @@ async function fetchRecords() {
   let records = [];
   let offset;
   do {
-    const url = new URL(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(TABLE)}`);
+    const url = new URL(`https://api.airtable.com/v0/${patAQbLt3DbLz2lns}/${encodeURIComponent(TABLE)}`);
     url.searchParams.set('pageSize', '100');
     if (offset) url.searchParams.set('offset', offset);
     const res = await fetch(url, { headers: { Authorization: `Bearer ${TOKEN}` } });
