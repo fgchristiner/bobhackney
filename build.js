@@ -70,7 +70,7 @@ function layout({ title, description, body, active }) {
 </head>
 <body>
 <header class="site-head">
-  <a class="wordmark" href="/"><img src="/logo.svg" alt="Bob Hackney Pottery" class="site-logo"></a>
+  <a class="wordmark" href="/"><img src="/logo.png" alt="Bob Hackney Pottery" class="site-logo"></a>
   <nav>
     <a href="/" class="${active === 'shop' ? 'is-active' : ''}">Shop</a>
     <a href="/about.html" class="${active === 'about' ? 'is-active' : ''}">About</a>
