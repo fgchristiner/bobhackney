@@ -66,19 +66,35 @@ function layout({ title, description, body, active }) {
 <meta name="description" content="${esc(description || '')}">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="stylesheet" href="/css/style.css">
+<link rel="icon" href="/favicon.png">
 </head>
 <body>
 <header class="site-head">
-  <a class="wordmark" href="/">Bob Hackney Pottery</a>
+  <a class="wordmark" href="/"><img src="/logo.svg" alt="Bob Hackney Pottery" class="site-logo"></a>
   <nav>
     <a href="/" class="${active === 'shop' ? 'is-active' : ''}">Shop</a>
     <a href="/about.html" class="${active === 'about' ? 'is-active' : ''}">About</a>
+    <div class="nav-dropdown">
+      <button class="nav-dropdown-btn ${active === 'learn' ? 'is-active' : ''}" aria-haspopup="true">Learn with me</button>
+      <div class="nav-dropdown-menu">
+        <a href="https://valleyart.org/classes/">Classes at Valley Art</a>
+        <a href="/private-lessons.html">Private lessons</a>
+      </div>
+    </div>
     <a href="/commission.html" class="${active === 'commission' ? 'is-active' : ''}">Request a commission</a>
   </nav>
 </header>
 <main>${body}</main>
 <footer class="site-foot">
   <p>Handmade in small batches &mdash; each piece is one of a kind.</p>
+  <div class="social-links">
+    <a href="https://www.instagram.com/badgerpdx/" aria-label="Instagram" title="Instagram">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
+    </a>
+    <a href="#" aria-label="YouTube" title="YouTube">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.5 9.5l5 2.5-5 2.5z" fill="currentColor" stroke="none"/></svg>
+    </a>
+  </div>
 </footer>
 </body>
 </html>`;
@@ -148,6 +164,24 @@ function aboutPage() {
     <p class="signoff">Thank you for sharing a small part of this ongoing muddy journey.</p>
   </div>`;
   return layout({ title: 'About — Bob Hackney', description: 'About Bob Hackney, potter.', body, active: 'about' });
+}
+
+function privateLessonsPage() {
+  const body = `
+  <section class="hero hero-narrow">
+    <h1>Private lessons</h1>
+    <p>One-on-one time at the wheel, tailored to where you're at and what you want to learn.</p>
+  </section>
+  <form class="commission-form" name="private-lessons" method="POST" data-netlify="true" netlify-honeypot="bot-field">
+    <input type="hidden" name="form-name" value="private-lessons">
+    <p class="visually-hidden"><label>Don't fill this out: <input name="bot-field"></label></p>
+    <label>Your name<input name="name" required></label>
+    <label>Email<input name="email" type="email" required></label>
+    <label>Phone (optional)<input name="phone" type="tel"></label>
+    <label>Tell me about your experience with clay, and what you'd like to work toward<textarea name="details" rows="6" required placeholder="Total beginner, a few classes in, years of experience... and what you're hoping to learn or make"></textarea></label>
+    <button class="btn btn-buy" type="submit">Send request</button>
+  </form>`;
+  return layout({ title: 'Private lessons — Bob Hackney', description: 'Request private pottery lessons.', body, active: 'learn' });
 }
 
 function commissionPage() {
@@ -225,6 +259,7 @@ async function main() {
   }
   await fs.writeFile(path.join(OUT, 'index.html'), shopPage(pieces));
   await fs.writeFile(path.join(OUT, 'about.html'), aboutPage());
+  await fs.writeFile(path.join(OUT, 'private-lessons.html'), privateLessonsPage());
   await fs.writeFile(path.join(OUT, 'commission.html'), commissionPage());
 
   console.log(`Built ${pieces.length} piece page(s).`);
