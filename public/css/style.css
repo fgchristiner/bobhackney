@@ -52,3 +52,28 @@ main{max-width:1040px;margin:0 auto;padding:0 24px 80px}
 
 .mut{color:var(--mut)}
 .site-foot{border-top:1px solid var(--line);padding:24px 28px;color:var(--mut);font-size:14px}
+
+/* --- long-form prose (About page, etc.) --- */
+.prose{max-width:620px;margin:0 auto;padding-top:24px}
+.prose p{margin:0 0 1.3em;font-size:17px}
+.prose p:first-of-type::first-letter{font-family:'Fraunces',serif;font-size:3em;line-height:.8;float:left;padding:.06em .08em 0 0;color:var(--clay)}
+.prose .signoff{color:var(--mut);font-style:italic;margin-top:1.6em}
+
+/* a quiet rule between sections, instead of a hard border */
+.divider{border:0;height:1px;margin:48px 0;background:linear-gradient(to right,transparent,var(--line) 20%,var(--line) 80%,transparent)}
+
+/* --- studio log / journal-style entries --- */
+.studio-log{border-left:2px solid var(--clay);padding:2px 0 2px 18px;margin:20px 0;max-width:520px}
+.studio-log p{margin:0;font-style:italic;color:var(--ink)}
+.studio-log .log-date{display:block;font-style:normal;color:var(--mut);font-size:13px;margin-top:6px}
+
+/* per-piece "how it was made" note, used under piece photos/descriptions */
+.making-note{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;font-size:14px;color:var(--mut);margin-top:14px}
+.making-note strong{color:var(--ink);font-weight:600}
+
+/* soften interactive states to fit the slower, handmade tone */
+.piece-photo{transition:transform .5s ease}
+.piece-card:hover .piece-photo img{transform:scale(1.03);transition:transform 1.2s ease}
+.btn{transition:opacity .3s ease,transform .2s ease}
+.btn-buy:hover{transform:translateY(-1px)}
+.commission-form input:focus,.commission-form textarea:focus{outline:2px solid var(--clay);outline-offset:1px}
