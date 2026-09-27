@@ -104,12 +104,12 @@ main{max-width:1040px;margin:0 auto;padding:0 24px 80px}
 .site-logo{height:68px}
 
 .site-head nav{gap:28px}
-.site-head nav a{font-size:15px;letter-spacing:.01em}
+.site-head nav a{font-size:25px;letter-spacing:.01em}
 
-.site-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.site-foot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px}
 .site-foot p{margin:0}
 .social-links{margin-top:0}
-.social-links svg{width:26px;height:26px}
+.social-links svg{width:46px;height:46px}
 
 /* --- /learn.html option cards --- */
 .learn-options{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;margin-top:28px;max-width:640px}
@@ -120,5 +120,5 @@ main{max-width:1040px;margin:0 auto;padding:0 24px 80px}
 
 /* --- logo + site name side by side --- */
 .wordmark{display:flex;align-items:center;gap:12px;text-decoration:none}
-.wordmark span{font-family:'Fraunces',serif;font-size:20px;color:var(--ink)}
+.wordmark span{font-family:'Fraunces',serif;font-size:40px;color:var(--ink)}
  
