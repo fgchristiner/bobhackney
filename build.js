@@ -69,7 +69,7 @@ function layout({ title, description, body, active }) {
 </head>
 <body>
 <header class="site-head">
-  <a class="wordmark" href="/">Kiln &amp; Table</a>
+  <a class="wordmark" href="/">Bob Hackney Pottery</a>
   <nav>
     <a href="/" class="${active === 'shop' ? 'is-active' : ''}">Shop</a>
     <a href="/about.html" class="${active === 'about' ? 'is-active' : ''}">About</a>
@@ -118,7 +118,7 @@ function piecePage(p) {
       <a class="btn btn-ghost" href="/commission.html">Request a similar piece</a>
     </div>
   </div>`;
-  return layout({ title: `${p.name} — Kiln & Table`, description: p.description, body, active: 'shop' });
+  return layout({ title: `${p.name} — Bob Hackney`, description: p.description, body, active: 'shop' });
 }
 
 function shopPage(pieces) {
@@ -131,7 +131,7 @@ function shopPage(pieces) {
   <section class="grid">
     ${available.length ? available.map(pieceCard).join('\n') : '<p class="mut">Nothing in the shop right now &mdash; check back soon.</p>'}
   </section>`;
-  return layout({ title: 'Kiln & Table — handmade pottery', description: 'Small-batch handmade stoneware.', body, active: 'shop' });
+  return layout({ title: 'Bob Hackney — handmade pottery', description: 'Your Description Here.', body, active: 'shop' });
 }
 
 function aboutPage() {
@@ -147,7 +147,7 @@ function aboutPage() {
     <p>For me, pottery is ultimately about attention&mdash;slowing down long enough to appreciate texture, form, color, and the small rituals that enrich daily life.</p>
     <p class="signoff">Thank you for sharing a small part of this ongoing muddy journey.</p>
   </div>`;
-  return layout({ title: 'About — Kiln & Table', description: 'About Bob Hackney, potter.', body, active: 'about' });
+  return layout({ title: 'About — Bob Hackney', description: 'About Bob Hackney, potter.', body, active: 'about' });
 }
 
 function commissionPage() {
@@ -179,7 +179,7 @@ function commissionPage() {
     }
   });
   </script>`;
-  return layout({ title: 'Request a commission — Kiln & Table', description: 'Request a custom pottery commission.', body, active: 'commission' });
+  return layout({ title: 'Request a commission — Bob Hackney', description: 'Request a custom pottery commission.', body, active: 'commission' });
 }
 
 async function main() {
