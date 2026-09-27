@@ -157,6 +157,9 @@ function aboutPage() {
   </section>
   <div class="prose">
     <p>I've spent most of my life working with clay, though it often feels more accurate to say that clay has spent most of my life teaching me.</p>
+    <div class="about-photos">
+  <img src="/about/bob-1.jpg" alt="Bob in the garden">
+</div>
     <p>After decades of making, teaching, apprenticing, and experimenting, I remain fascinated by the transformation of simple materials from the earth into objects that become part of everyday life. My work is shaped by the rhythms of Forest Grove, Oregon, where gardens bloom with the seasons, beauty reveals itself slowly, and patience is still considered a virtue.</p>
     <p>I am drawn to traditional crafts and materials that reward careful attention&mdash;clay, fire, fiber, plants, and soil. Whether throwing a pot, tending a garden, or exploring horsehair raku, I find myself returning to the same idea: meaningful things take time.</p>
     <p>In a world increasingly defined by speed and automation, handmade pottery offers something different. Every piece carries evidence of the human hand and the quiet, unpredictable process of making. The subtle variations and imperfections are reminders that a real person shaped this object, fired it, and waited to see what the kiln would reveal.</p>
