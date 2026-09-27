@@ -117,3 +117,8 @@ main{max-width:1040px;margin:0 auto;padding:0 24px 80px}
 .learn-card:hover{border-color:var(--clay)}
 .learn-card h3{margin-bottom:6px}
 .learn-card p{margin:0;color:var(--mut);font-size:14px}
+
+/* --- logo + site name side by side --- */
+.wordmark{display:flex;align-items:center;gap:12px;text-decoration:none}
+.wordmark span{font-family:'Fraunces',serif;font-size:20px;color:var(--ink)}
+ 
