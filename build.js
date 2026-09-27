@@ -70,17 +70,11 @@ function layout({ title, description, body, active }) {
 </head>
 <body>
 <header class="site-head">
-  <a class="wordmark" href="/"><img src="/logo.png" alt="Bob Hackney Pottery" class="site-logo"></a>
+  <a class="wordmark" href="/"><img src="/logo.svg" alt="Bob Hackney Pottery" class="site-logo"></a>
   <nav>
     <a href="/" class="${active === 'shop' ? 'is-active' : ''}">Shop</a>
     <a href="/about.html" class="${active === 'about' ? 'is-active' : ''}">About</a>
-    <div class="nav-dropdown">
-      <button class="nav-dropdown-btn ${active === 'learn' ? 'is-active' : ''}" aria-haspopup="true">Learn with me</button>
-      <div class="nav-dropdown-menu">
-        <a href="https://valleyart.org/classes/">Classes at Valley Art</a>
-        <a href="/private-lessons.html">Private lessons</a>
-      </div>
-    </div>
+    <a href="/learn.html" class="${active === 'learn' ? 'is-active' : ''}">Learn with me</a>
     <a href="/commission.html" class="${active === 'commission' ? 'is-active' : ''}">Request a commission</a>
   </nav>
 </header>
@@ -167,6 +161,25 @@ function aboutPage() {
     <p class="signoff">Thank you for sharing a small part of this ongoing muddy journey.</p>
   </div>`;
   return layout({ title: 'About — Bob Hackney', description: 'About Bob Hackney, potter.', body, active: 'about' });
+}
+
+function learnPage() {
+  const body = `
+  <section class="hero hero-narrow">
+    <h1>Learn with me</h1>
+    <p>Two ways to work with clay alongside me, depending on what fits.</p>
+  </section>
+  <div class="learn-options">
+    <a class="learn-card" href="https://valleyart.org/classes/">
+      <h3>Classes at Valley Art</h3>
+      <p>Group classes on a regular schedule, open to all levels.</p>
+    </a>
+    <a class="learn-card" href="/private-lessons.html">
+      <h3>Private lessons</h3>
+      <p>One-on-one time at the wheel, tailored to where you're at.</p>
+    </a>
+  </div>`;
+  return layout({ title: 'Learn with me — Bob Hackney', description: 'Classes and private pottery lessons.', body, active: 'learn' });
 }
 
 function privateLessonsPage() {
@@ -262,6 +275,7 @@ async function main() {
   }
   await fs.writeFile(path.join(OUT, 'index.html'), shopPage(pieces));
   await fs.writeFile(path.join(OUT, 'about.html'), aboutPage());
+  await fs.writeFile(path.join(OUT, 'learn.html'), learnPage());
   await fs.writeFile(path.join(OUT, 'private-lessons.html'), privateLessonsPage());
   await fs.writeFile(path.join(OUT, 'commission.html'), commissionPage());
 
