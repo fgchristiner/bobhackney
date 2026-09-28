@@ -1,7 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Public+Sans:wght@400;500;600&display=swap');
 
 :root{
-  --bg:#efeae3; --ink:#221e1a; --mut:#786c62; --card:#fbf8f4; --line:#ddd3c6;
+  --bg:#d9e6ee; --ink:#221e1a; --mut:#665b52; --card:#f6f9fb; --line:#bfd0dc;
   --accent:#35506b; --accent-ink:#f4f1eb; --clay:#a8613c; --radius:4px;
 }
 *{box-sizing:border-box}
