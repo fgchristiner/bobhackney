@@ -131,6 +131,37 @@ function piecePage(p) {
   return layout({ title: `${p.name} — Bob Hackney`, description: p.description, body, active: 'shop' });
 }
 
+// --- category filter row + per-category pages, built from the Airtable "Type" field ---
+function categoryNav(pieces, activeSlug = '') {
+  const groups = new Map();
+  for (const p of pieces) {
+    if (p.status !== 'Available' || !p.type) continue;
+    const key = slugify(p.type);
+    if (!groups.has(key)) groups.set(key, { label: p.type, n: 0 });
+    groups.get(key).n++;
+  }
+  if (groups.size < 2) return '';
+  const links = [...groups.entries()]
+    .sort((a, b) => a[1].label.localeCompare(b[1].label))
+    .map(([slug, g]) => `<a class="category-pill${slug === activeSlug ? ' is-active' : ''}" href="/category/${slug}.html">${esc(g.label)} <span>${g.n}</span></a>`)
+    .join('');
+  return `<nav class="category-nav" aria-label="Browse by type"><a class="category-pill${activeSlug === '' ? ' is-active' : ''}" href="/">All</a>${links}</nav>`;
+}
+
+function categoryPage(slug, label, pieces) {
+  const items = pieces.filter((p) => p.status === 'Available' && slugify(p.type) === slug);
+  const body = `
+  <section class="hero">
+    <h1>${esc(label)}</h1>
+    <p>Handmade ${esc(label.toLowerCase())} by Bob Hackney &mdash; each one thrown and glazed by hand.</p>
+  </section>
+  ${categoryNav(pieces, slug)}
+  <section class="grid">
+    ${items.map(pieceCard).join('\n')}
+  </section>`;
+  return layout({ title: `${label} — Bob Hackney`, description: `Handmade ${label.toLowerCase()} by Bob Hackney, thrown and glazed by hand in Forest Grove, Oregon.`, body, active: 'shop' });
+}
+
 function shopPage(pieces) {
   const available = pieces.filter((p) => p.status === 'Available');
   const body = `
@@ -138,6 +169,7 @@ function shopPage(pieces) {
     <h1>Small-batch stoneware, thrown and glazed by hand.</h1>
     <p>Every piece here is one of a kind &mdash; once it's gone, it's gone. Don't see what you're after? <a href="/commission.html">Request a commission.</a></p>
   </section>
+  ${categoryNav(pieces)}
   <section class="grid">
     ${available.length ? available.map(pieceCard).join('\n') : '<p class="mut">Nothing in the shop right now &mdash; check back soon.</p>'}
   </section>`;
@@ -274,6 +306,17 @@ async function main() {
     await fs.writeFile(path.join(OUT, 'pieces', `${p.slug}.html`), piecePage(p));
   }
   await fs.writeFile(path.join(OUT, 'index.html'), shopPage(pieces));
+
+  // one page per Type that has at least one Available piece
+  await fs.mkdir(path.join(OUT, 'category'), { recursive: true });
+  const categories = new Map();
+  for (const p of pieces) {
+    if (p.status === 'Available' && p.type && !categories.has(slugify(p.type))) categories.set(slugify(p.type), p.type);
+  }
+  for (const [slug, label] of categories) {
+    await fs.writeFile(path.join(OUT, 'category', `${slug}.html`), categoryPage(slug, label, pieces));
+  }
+
   await fs.writeFile(path.join(OUT, 'about.html'), aboutPage());
   await fs.writeFile(path.join(OUT, 'learn.html'), learnPage());
   await fs.writeFile(path.join(OUT, 'private-lessons.html'), privateLessonsPage());
