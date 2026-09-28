@@ -80,7 +80,7 @@ function layout({ title, description, body, active }) {
 </header>
 <main>${body}</main>
 <footer class="site-foot">
-  <p>Handmade in small batches &mdash; each piece is one of a kind.</p>
+  <p>Handmade in my studio in Forest Grove, Oregon.</p>
   <div class="social-links">
     <a href="https://www.instagram.com/badgerpdx/" aria-label="Instagram" title="Instagram">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/></svg>
@@ -141,7 +141,7 @@ function shopPage(pieces) {
   <section class="grid">
     ${available.length ? available.map(pieceCard).join('\n') : '<p class="mut">Nothing in the shop right now &mdash; check back soon.</p>'}
   </section>`;
-  return layout({ title: 'Bob Hackney — handmade pottery', description: 'Your Description Here.', body, active: 'shop' });
+  return layout({ title: 'Bob Hackney — handmade pottery', description: 'Handmade stoneware and horsehair raku pottery by clay artist Bob Hackney in Forest Grove, Oregon.', body, active: 'shop' });
 }
 
 function aboutPage() {
