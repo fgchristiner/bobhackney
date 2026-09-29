@@ -15,6 +15,8 @@ const tableName = 'Pieces';
 const TABLE = 'Pieces';
 const OUT = 'dist';
 const IMG_DIR = path.join(OUT, 'photos');
+const PORTFOLIO_TABLE = 'Portfolio';
+const PORTFOLIO_IMG_DIR = path.join(OUT, 'portfolio-photos');
 
 if (!TOKEN || !BASE_ID) {
   console.error('Missing AIRTABLE_TOKEN or AIRTABLE_BASE_ID env vars.');
@@ -49,6 +51,23 @@ async function downloadPhoto(url, destName) {
   await fs.writeFile(dest, buf);
 }
 
+// --- fetch every record from the separate Portfolio table (builds its own URL, unrelated to the Pieces one above) ---
+async function fetchPortfolioRecords() {
+  let records = [];
+  let offset;
+  do {
+    const purl = new URL(`https://api.airtable.com/v0/${BASE_ID}/${PORTFOLIO_TABLE}`);
+    purl.searchParams.set('pageSize', '100');
+    if (offset) purl.searchParams.set('offset', offset);
+    const res = await fetch(purl, { headers: { Authorization: `Bearer ${TOKEN}` } });
+    if (!res.ok) throw new Error(`Airtable Portfolio fetch failed: ${res.status} ${await res.text()}`);
+    const data = await res.json();
+    records = records.concat(data.records);
+    offset = data.offset;
+  } while (offset);
+  return records;
+}
+
 function esc(s = '') {
   return String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
@@ -74,6 +93,7 @@ function layout({ title, description, body, active }) {
   <nav>
     <a href="/" class="${active === 'shop' ? 'is-active' : ''}">Shop</a>
     <a href="/about.html" class="${active === 'about' ? 'is-active' : ''}">About</a>
+    <a href="/portfolio.html" class="${active === 'portfolio' ? 'is-active' : ''}">Portfolio</a>
     <a href="/learn.html" class="${active === 'learn' ? 'is-active' : ''}">Learn with me</a>
     <a href="/commission.html" class="${active === 'commission' ? 'is-active' : ''}">Request a commission</a>
   </nav>
@@ -174,6 +194,51 @@ function shopPage(pieces) {
     ${available.length ? available.map(pieceCard).join('\n') : '<p class="mut">Nothing in the shop right now &mdash; check back soon.</p>'}
   </section>`;
   return layout({ title: 'Bob Hackney — handmade pottery', description: 'Handmade stoneware and horsehair raku pottery by clay artist Bob Hackney in Forest Grove, Oregon.', body, active: 'shop' });
+}
+
+function portfolioCard(item) {
+  return `<article class="portfolio-card">
+    <div class="piece-photo"><img src="/portfolio-photos/${item.photoFile}" alt="${esc(item.name)}" loading="lazy"></div>
+    <h3>${esc(item.name)}</h3>
+    <p class="piece-meta">${item.year ? esc(item.year) + ' &middot; ' : ''}${esc(item.type)}${item.dimensions ? ' &middot; ' + esc(item.dimensions) : ''}</p>
+    ${item.description ? `<p class="piece-desc">${esc(item.description)}</p>` : ''}
+  </article>`;
+}
+
+function yearNav(items, activeYear = '') {
+  const years = [...new Set(items.map((i) => i.year).filter(Boolean))].sort((a, b) => b.localeCompare(a));
+  if (years.length < 2) return '';
+  const links = years
+    .map((y) => `<a class="category-pill${y === activeYear ? ' is-active' : ''}" href="/portfolio/${y}.html">${esc(y)}</a>`)
+    .join('');
+  return `<nav class="category-nav" aria-label="Browse by year"><a class="category-pill${activeYear === '' ? ' is-active' : ''}" href="/portfolio.html">All years</a>${links}</nav>`;
+}
+
+function portfolioPage(items) {
+  const sorted = [...items].sort((a, b) => (b.year || '').localeCompare(a.year || ''));
+  const body = `
+  <section class="hero">
+    <h1>Portfolio</h1>
+    <p>A record of work made over the years &mdash; some pieces here are available, most are simply part of the archive.</p>
+  </section>
+  ${yearNav(items)}
+  <section class="grid">
+    ${sorted.length ? sorted.map(portfolioCard).join('\n') : '<p class="mut">Nothing to show yet.</p>'}
+  </section>`;
+  return layout({ title: 'Portfolio — Bob Hackney', description: 'A portfolio of pottery made by Bob Hackney over the years.', body, active: 'portfolio' });
+}
+
+function portfolioYearPage(year, items) {
+  const sorted = items.filter((i) => i.year === year);
+  const body = `
+  <section class="hero">
+    <h1>Portfolio &mdash; ${esc(year)}</h1>
+  </section>
+  ${yearNav(items, year)}
+  <section class="grid">
+    ${sorted.map(portfolioCard).join('\n')}
+  </section>`;
+  return layout({ title: `${year} Portfolio — Bob Hackney`, description: `Pottery made by Bob Hackney in ${year}.`, body, active: 'portfolio' });
 }
 
 function aboutPage() {
@@ -318,6 +383,41 @@ async function main() {
   }
 
   await fs.writeFile(path.join(OUT, 'about.html'), aboutPage());
+
+  // --- Portfolio table: separate from Pieces, no Stripe/Status logic, just a browsable archive ---
+  await fs.mkdir(PORTFOLIO_IMG_DIR, { recursive: true });
+  await fs.mkdir(path.join(OUT, 'portfolio'), { recursive: true });
+  const portfolioRecords = await fetchPortfolioRecords();
+  const portfolioItems = [];
+  for (const rec of portfolioRecords) {
+    const f = rec.fields;
+    if (!f.Name) continue;
+    const slug = `${slugify(f.Name)}-${rec.id.slice(-5)}`;
+    const photo = Array.isArray(f.Image) && f.Image[0];
+    let photoFile = 'placeholder.svg';
+    if (photo) {
+      const ext = (photo.type && photo.type.split('/')[1]) || 'jpg';
+      photoFile = `${slug}.${ext}`;
+      const dest = path.join(PORTFOLIO_IMG_DIR, photoFile);
+      if (!existsSync(dest)) {
+        const res = await fetch(photo.url);
+        if (res.ok) await fs.writeFile(dest, Buffer.from(await res.arrayBuffer()));
+      }
+    }
+    portfolioItems.push({
+      name: f.Name,
+      year: f.Year ? String(f.Year) : '',
+      type: f.Type || '',
+      dimensions: f.Dimensions || '',
+      description: f.Description || '',
+      photoFile,
+    });
+  }
+  await fs.writeFile(path.join(OUT, 'portfolio.html'), portfolioPage(portfolioItems));
+  for (const year of new Set(portfolioItems.map((i) => i.year).filter(Boolean))) {
+    await fs.writeFile(path.join(OUT, 'portfolio', `${year}.html`), portfolioYearPage(year, portfolioItems));
+  }
+
   await fs.writeFile(path.join(OUT, 'learn.html'), learnPage());
   await fs.writeFile(path.join(OUT, 'private-lessons.html'), privateLessonsPage());
   await fs.writeFile(path.join(OUT, 'commission.html'), commissionPage());
