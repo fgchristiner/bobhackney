@@ -15,8 +15,6 @@ const tableName = 'Pieces';
 const TABLE = 'Pieces';
 const OUT = 'dist';
 const IMG_DIR = path.join(OUT, 'photos');
-const PORTFOLIO_TABLE = 'Portfolio';
-const PORTFOLIO_IMG_DIR = path.join(OUT, 'portfolio-photos');
 
 if (!TOKEN || !BASE_ID) {
   console.error('Missing AIRTABLE_TOKEN or AIRTABLE_BASE_ID env vars.');
@@ -49,23 +47,6 @@ async function downloadPhoto(url, destName) {
   if (!res.ok) throw new Error(`Photo download failed: ${res.status} ${url}`);
   const buf = Buffer.from(await res.arrayBuffer());
   await fs.writeFile(dest, buf);
-}
-
-// --- fetch every record from the separate Portfolio table (builds its own URL, unrelated to the Pieces one above) ---
-async function fetchPortfolioRecords() {
-  let records = [];
-  let offset;
-  do {
-    const purl = new URL(`https://api.airtable.com/v0/${BASE_ID}/${PORTFOLIO_TABLE}`);
-    purl.searchParams.set('pageSize', '100');
-    if (offset) purl.searchParams.set('offset', offset);
-    const res = await fetch(purl, { headers: { Authorization: `Bearer ${TOKEN}` } });
-    if (!res.ok) throw new Error(`Airtable Portfolio fetch failed: ${res.status} ${await res.text()}`);
-    const data = await res.json();
-    records = records.concat(data.records);
-    offset = data.offset;
-  } while (offset);
-  return records;
 }
 
 function esc(s = '') {
@@ -198,7 +179,7 @@ function shopPage(pieces) {
 
 function portfolioCard(item) {
   return `<article class="portfolio-card">
-    <div class="piece-photo"><img src="/portfolio-photos/${item.photoFile}" alt="${esc(item.name)}" loading="lazy"></div>
+    <div class="piece-photo"><img src="/photos/${item.photoFile}" alt="${esc(item.name)}" loading="lazy"></div>
     <h3>${esc(item.name)}</h3>
     <p class="piece-meta">${item.year ? esc(item.year) + ' &middot; ' : ''}${esc(item.type)}${item.dimensions ? ' &middot; ' + esc(item.dimensions) : ''}</p>
     ${item.description ? `<p class="piece-desc">${esc(item.description)}</p>` : ''}
@@ -337,11 +318,11 @@ async function main() {
 
   const records = await fetchRecords();
   const pieces = [];
+  const portfolioItems = [];
 
   for (const rec of records) {
     const f = rec.fields;
-    if (!f.Name || !f.Status) continue; // skip incomplete/unreviewed rows
-    if (f.Status !== 'Available' && f.Status !== 'Sold') continue; // "New" rows stay unpublished
+    if (!f.Name) continue; // needs at least a name to build anything from this row
 
     const slug = `${slugify(f.Name)}-${rec.id.slice(-5)}`;
     const photo = Array.isArray(f.Photos) && f.Photos[0];
@@ -352,7 +333,7 @@ async function main() {
       await downloadPhoto(photo.url, photoFile);
     }
 
-    pieces.push({
+    const item = {
       slug,
       name: f.Name,
       type: f.Type || '',
@@ -361,10 +342,17 @@ async function main() {
       description: f.Description || '',
       makingNote: f['Making Note'] || '',
       price: f.Price || 0,
-      status: f.Status,
+      status: f.Status || '',
       stripeLink: f['Stripe Link'] || '',
       photoFile,
-    });
+      year: f.Year ? String(f.Year) : '',
+    };
+
+    // shop pages: only rows reviewed and marked Available or Sold
+    if (item.status === 'Available' || item.status === 'Sold') pieces.push(item);
+
+    // portfolio: any row with the Portfolio checkbox ticked, regardless of its shop status
+    if (f.Portfolio) portfolioItems.push(item);
   }
 
   for (const p of pieces) {
@@ -384,35 +372,7 @@ async function main() {
 
   await fs.writeFile(path.join(OUT, 'about.html'), aboutPage());
 
-  // --- Portfolio table: separate from Pieces, no Stripe/Status logic, just a browsable archive ---
-  await fs.mkdir(PORTFOLIO_IMG_DIR, { recursive: true });
   await fs.mkdir(path.join(OUT, 'portfolio'), { recursive: true });
-  const portfolioRecords = await fetchPortfolioRecords();
-  const portfolioItems = [];
-  for (const rec of portfolioRecords) {
-    const f = rec.fields;
-    if (!f.Name) continue;
-    const slug = `${slugify(f.Name)}-${rec.id.slice(-5)}`;
-    const photo = Array.isArray(f.Image) && f.Image[0];
-    let photoFile = 'placeholder.svg';
-    if (photo) {
-      const ext = (photo.type && photo.type.split('/')[1]) || 'jpg';
-      photoFile = `${slug}.${ext}`;
-      const dest = path.join(PORTFOLIO_IMG_DIR, photoFile);
-      if (!existsSync(dest)) {
-        const res = await fetch(photo.url);
-        if (res.ok) await fs.writeFile(dest, Buffer.from(await res.arrayBuffer()));
-      }
-    }
-    portfolioItems.push({
-      name: f.Name,
-      year: f.Year ? String(f.Year) : '',
-      type: f.Type || '',
-      dimensions: f.Dimensions || '',
-      description: f.Description || '',
-      photoFile,
-    });
-  }
   await fs.writeFile(path.join(OUT, 'portfolio.html'), portfolioPage(portfolioItems));
   for (const year of new Set(portfolioItems.map((i) => i.year).filter(Boolean))) {
     await fs.writeFile(path.join(OUT, 'portfolio', `${year}.html`), portfolioYearPage(year, portfolioItems));
